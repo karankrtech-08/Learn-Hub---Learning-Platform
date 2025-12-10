@@ -1,0 +1,549 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - LearnHub</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="../css/custom.css">
+    <link rel="stylesheet" href="../css/animations.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+</head>
+<body class="font-poppins bg-gray-50">
+    <!-- Navigation -->
+    <nav class="navbar fixed top-0 w-full bg-white shadow-lg z-50">
+        <div class="container mx-auto px-6 py-4">
+            <div class="flex justify-between items-center">
+                <div class="flex items-center space-x-2">
+                    <a href="../index.html" class="flex items-center space-x-2">
+                        <div class="w-10 h-10 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg flex items-center justify-center">
+                            <i class="fas fa-graduation-cap text-white text-xl"></i>
+                        </div>
+                        <span class="text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">LearnHub</span>
+                    </a>
+                </div>
+                
+                <div class="hidden md:flex items-center space-x-8">
+                    <a href="../index.html" class="nav-link text-gray-700 hover:text-blue-600 font-medium">Home</a>
+                    <a href="courses.html" class="nav-link text-gray-700 hover:text-blue-600 font-medium">Courses</a>
+                    <a href="dashboard.html" class="nav-link text-blue-600 font-medium border-b-2 border-blue-600">Dashboard</a>
+                    <a href="../index.html#features" class="nav-link text-gray-700 hover:text-blue-600 font-medium">Features</a>
+                </div>
+                
+                <div class="flex items-center space-x-4">
+                    <!-- Notification Bell -->
+                    <div class="relative">
+                        <button id="notification-bell" class="w-10 h-10 bg-gray-100 rounded-full flex items-center justify-center hover:bg-gray-200 transition-colors duration-300">
+                            <i class="fas fa-bell text-gray-600"></i>
+                            <span class="notification-badge">3</span>
+                        </button>
+                        <div id="notification-panel" class="hidden absolute right-0 mt-2 w-80 bg-white rounded-lg shadow-xl py-2 z-50">
+                            <div class="px-4 py-3 border-b">
+                                <h3 class="font-bold">Notifications</h3>
+                            </div>
+                            <div id="notification-list" class="max-h-80 overflow-y-auto">
+                                <!-- Notifications will be loaded here -->
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- User Menu -->
+                    <div class="flex items-center space-x-3">
+                        <div class="text-right hidden md:block">
+                            <p class="font-semibold" id="user-name">Loading...</p>
+                            <p class="text-sm text-gray-600" id="user-email">Loading...</p>
+                        </div>
+                        <div class="relative group">
+                            <button class="w-10 h-10 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full flex items-center justify-center text-white font-semibold" id="user-avatar">
+                                L
+                            </button>
+                            <div class="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-xl py-2 hidden group-hover:block z-50">
+                                <a href="dashboard.html" class="block px-4 py-2 hover:bg-gray-100 transition-colors duration-300">
+                                    <i class="fas fa-tachometer-alt mr-2"></i>
+                                    Dashboard
+                                </a>
+                                <a href="#" class="block px-4 py-2 hover:bg-gray-100 transition-colors duration-300">
+                                    <i class="fas fa-user mr-2"></i>
+                                    My Profile
+                                </a>
+                                <a href="courses.html" class="block px-4 py-2 hover:bg-gray-100 transition-colors duration-300">
+                                    <i class="fas fa-book mr-2"></i>
+                                    My Courses
+                                </a>
+                                <div class="border-t my-2"></div>
+                                <button onclick="logout()" class="block w-full text-left px-4 py-2 text-red-600 hover:bg-red-50 transition-colors duration-300">
+                                    <i class="fas fa-sign-out-alt mr-2"></i>
+                                    Logout
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <button id="mobile-menu-btn" class="md:hidden text-gray-700">
+                        <i class="fas fa-bars text-xl"></i>
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Mobile Menu -->
+            <div id="mobile-menu" class="md:hidden hidden mt-4 bg-white rounded-lg shadow-lg p-4">
+                <div class="flex flex-col space-y-4">
+                    <a href="../index.html" class="mobile-nav-link py-2 px-4 rounded hover:bg-blue-50">Home</a>
+                    <a href="courses.html" class="mobile-nav-link py-2 px-4 rounded hover:bg-blue-50">Courses</a>
+                    <a href="dashboard.html" class="mobile-nav-link py-2 px-4 rounded hover:bg-blue-50">Dashboard</a>
+                    <button onclick="logout()" class="text-left py-2 px-4 text-red-600 rounded hover:bg-red-50 transition-colors duration-300">
+                        <i class="fas fa-sign-out-alt mr-2"></i>
+                        Logout
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Dashboard Header -->
+    <section class="pt-32 pb-8">
+        <div class="container mx-auto px-6">
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-8">
+                <div>
+                    <h1 class="text-4xl font-bold mb-2">Welcome back, <span id="dashboard-user-name">Learner</span>!</h1>
+                    <p class="text-gray-600">Track your progress and continue learning</p>
+                </div>
+                <div class="flex items-center space-x-4 mt-4 md:mt-0">
+                    <div class="relative">
+                        <input type="text" 
+                               placeholder="Search dashboard..."
+                               class="w-64 px-4 py-2 pl-10 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-colors duration-300">
+                        <i class="fas fa-search absolute left-3 top-3 text-gray-400"></i>
+                    </div>
+                    <button class="px-6 py-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white font-medium rounded-lg hover:shadow-lg transition-all duration-300">
+                        <i class="fas fa-plus mr-2"></i>
+                        New Course
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Dashboard Stats -->
+    <section class="py-6">
+        <div class="container mx-auto px-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <div class="bg-white rounded-2xl shadow-lg p-6">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-gray-600">Enrolled Courses</p>
+                            <h3 class="text-3xl font-bold mt-2" id="enrolled-count">0</h3>
+                        </div>
+                        <div class="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center">
+                            <i class="fas fa-book text-blue-600 text-xl"></i>
+                        </div>
+                    </div>
+                    <div class="mt-4">
+                        <div class="flex items-center text-sm text-green-600">
+                            <i class="fas fa-arrow-up mr-1"></i>
+                            <span>+2 this month</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="bg-white rounded-2xl shadow-lg p-6">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-gray-600">Hours Learned</p>
+                            <h3 class="text-3xl font-bold mt-2" id="hours-learned">0</h3>
+                        </div>
+                        <div class="w-12 h-12 bg-green-100 rounded-xl flex items-center justify-center">
+                            <i class="fas fa-clock text-green-600 text-xl"></i>
+                        </div>
+                    </div>
+                    <div class="mt-4">
+                        <div class="flex items-center text-sm text-green-600">
+                            <i class="fas fa-arrow-up mr-1"></i>
+                            <span>+15 this week</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="bg-white rounded-2xl shadow-lg p-6">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-gray-600">Completion Rate</p>
+                            <h3 class="text-3xl font-bold mt-2" id="completion-rate">0%</h3>
+                        </div>
+                        <div class="w-12 h-12 bg-purple-100 rounded-xl flex items-center justify-center">
+                            <i class="fas fa-chart-line text-purple-600 text-xl"></i>
+                        </div>
+                    </div>
+                    <div class="mt-4">
+                        <div class="flex items-center text-sm text-green-600">
+                            <i class="fas fa-arrow-up mr-1"></i>
+                            <span>+12% this month</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="bg-white rounded-2xl shadow-lg p-6">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-gray-600">Certificates</p>
+                            <h3 class="text-3xl font-bold mt-2" id="certificates-count">0</h3>
+                        </div>
+                        <div class="w-12 h-12 bg-yellow-100 rounded-xl flex items-center justify-center">
+                            <i class="fas fa-award text-yellow-600 text-xl"></i>
+                        </div>
+                    </div>
+                    <div class="mt-4">
+                        <div class="flex items-center text-sm text-green-600">
+                            <i class="fas fa-arrow-up mr-1"></i>
+                            <span>+1 this month</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Main Dashboard Content -->
+    <section class="py-8">
+        <div class="container mx-auto px-6">
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <!-- Left Column -->
+                <div class="lg:col-span-2">
+                    <!-- Progress Overview -->
+                    <div class="bg-white rounded-2xl shadow-lg p-6 mb-8">
+                        <div class="flex justify-between items-center mb-6">
+                            <h2 class="text-2xl font-bold">Learning Progress</h2>
+                            <select class="px-4 py-2 bg-gray-100 border border-gray-300 rounded-lg">
+                                <option>This Month</option>
+                                <option>Last Month</option>
+                                <option>This Year</option>
+                            </select>
+                        </div>
+                        
+                        <div id="progress-chart" class="h-64 mb-6 flex items-center justify-center">
+                            <!-- Chart will be loaded here -->
+                            <div class="text-center">
+                                <i class="fas fa-chart-bar text-gray-400 text-5xl mb-4"></i>
+                                <p class="text-gray-600">Progress chart will be displayed here</p>
+                            </div>
+                        </div>
+                        
+                        <div class="grid grid-cols-3 gap-4">
+                            <div class="text-center">
+                                <div class="text-2xl font-bold text-blue-600">12</div>
+                                <div class="text-gray-600">Courses Taken</div>
+                            </div>
+                            <div class="text-center">
+                                <div class="text-2xl font-bold text-green-600">8</div>
+                                <div class="text-gray-600">Completed</div>
+                            </div>
+                            <div class="text-center">
+                                <div class="text-2xl font-bold text-purple-600">4</div>
+                                <div class="text-gray-600">In Progress</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Enrolled Courses -->
+                    <div class="bg-white rounded-2xl shadow-lg p-6">
+                        <div class="flex justify-between items-center mb-6">
+                            <h2 class="text-2xl font-bold">Enrolled Courses</h2>
+                            <a href="courses.html" class="text-blue-600 font-medium hover:text-blue-800">
+                                View All
+                            </a>
+                        </div>
+                        
+                        <div id="enrolled-courses" class="space-y-4">
+                            <!-- Courses will be loaded here -->
+                            <div class="text-center py-8">
+                                <i class="fas fa-book text-gray-400 text-5xl mb-4"></i>
+                                <p class="text-gray-600 mb-4">You haven't enrolled in any courses yet</p>
+                                <a href="courses.html" class="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors duration-300">
+                                    Browse Courses
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Right Column -->
+                <div class="space-y-8">
+                    <!-- Upcoming Deadlines -->
+                    <div class="bg-white rounded-2xl shadow-lg p-6">
+                        <h2 class="text-2xl font-bold mb-6">Upcoming Deadlines</h2>
+                        
+                        <div class="space-y-4">
+                            <div class="flex items-center p-3 bg-blue-50 rounded-lg">
+                                <div class="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center mr-4">
+                                    <i class="fas fa-file-alt text-blue-600"></i>
+                                </div>
+                                <div>
+                                    <p class="font-medium">Web Dev Assignment</p>
+                                    <p class="text-sm text-gray-600">Due in 2 days</p>
+                                </div>
+                            </div>
+                            
+                            <div class="flex items-center p-3 bg-yellow-50 rounded-lg">
+                                <div class="w-10 h-10 bg-yellow-100 rounded-lg flex items-center justify-center mr-4">
+                                    <i class="fas fa-project-diagram text-yellow-600"></i>
+                                </div>
+                                <div>
+                                    <p class="font-medium">ML Project</p>
+                                    <p class="text-sm text-gray-600">Due in 5 days</p>
+                                </div>
+                            </div>
+                            
+                            <div class="flex items-center p-3 bg-green-50 rounded-lg">
+                                <div class="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center mr-4">
+                                    <i class="fas fa-chart-bar text-green-600"></i>
+                                </div>
+                                <div>
+                                    <p class="font-medium">Data Analysis Quiz</p>
+                                    <p class="text-sm text-gray-600">Due in 1 week</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Recent Activity -->
+                    <div class="bg-white rounded-2xl shadow-lg p-6">
+                        <h2 class="text-2xl font-bold mb-6">Recent Activity</h2>
+                        
+                        <div class="space-y-4">
+                            <div class="flex items-center">
+                                <div class="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center mr-3">
+                                    <i class="fas fa-check text-green-600"></i>
+                                </div>
+                                <div>
+                                    <p class="font-medium">Completed lesson</p>
+                                    <p class="text-sm text-gray-600">JavaScript Basics</p>
+                                </div>
+                                <span class="ml-auto text-sm text-gray-500">2h ago</span>
+                            </div>
+                            
+                            <div class="flex items-center">
+                                <div class="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center mr-3">
+                                    <i class="fas fa-play text-blue-600"></i>
+                                </div>
+                                <div>
+                                    <p class="font-medium">Started course</p>
+                                    <p class="text-sm text-gray-600">React Advanced</p>
+                                </div>
+                                <span class="ml-auto text-sm text-gray-500">1d ago</span>
+                            </div>
+                            
+                            <div class="flex items-center">
+                                <div class="w-8 h-8 bg-purple-100 rounded-full flex items-center justify-center mr-3">
+                                    <i class="fas fa-certificate text-purple-600"></i>
+                                </div>
+                                <div>
+                                    <p class="font-medium">Earned certificate</p>
+                                    <p class="text-sm text-gray-600">Web Development</p>
+                                </div>
+                                <span class="ml-auto text-sm text-gray-500">3d ago</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Quick Actions -->
+                    <div class="bg-gradient-to-r from-blue-600 to-purple-600 rounded-2xl shadow-lg p-6 text-white">
+                        <h2 class="text-2xl font-bold mb-6">Quick Actions</h2>
+                        
+                        <div class="space-y-3">
+                            <button class="w-full py-3 bg-white/20 hover:bg-white/30 rounded-lg transition-colors duration-300 flex items-center justify-center">
+                                <i class="fas fa-video mr-2"></i>
+                                Join Live Session
+                            </button>
+                            <button class="w-full py-3 bg-white/20 hover:bg-white/30 rounded-lg transition-colors duration-300 flex items-center justify-center">
+                                <i class="fas fa-download mr-2"></i>
+                                Download Materials
+                            </button>
+                            <button class="w-full py-3 bg-white/20 hover:bg-white/30 rounded-lg transition-colors duration-300 flex items-center justify-center">
+                                <i class="fas fa-question-circle mr-2"></i>
+                                Get Help
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-white py-12 mt-12">
+        <div class="container mx-auto px-6">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+                <div>
+                    <div class="flex items-center space-x-2 mb-6">
+                        <div class="w-10 h-10 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg flex items-center justify-center">
+                            <i class="fas fa-graduation-cap text-white text-xl"></i>
+                        </div>
+                        <span class="text-2xl font-bold">LearnHub</span>
+                    </div>
+                    <p class="text-gray-400 mb-6">Your learning journey, personalized.</p>
+                </div>
+                
+                <div>
+                    <h3 class="text-xl font-bold mb-6">Quick Links</h3>
+                    <ul class="space-y-3">
+                        <li><a href="../index.html" class="text-gray-400 hover:text-white transition-colors duration-300">Home</a></li>
+                        <li><a href="courses.html" class="text-gray-400 hover:text-white transition-colors duration-300">Courses</a></li>
+                        <li><a href="dashboard.html" class="text-gray-400 hover:text-white transition-colors duration-300">Dashboard</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h3 class="text-xl font-bold mb-6">Resources</h3>
+                    <ul class="space-y-3">
+                        <li><a href="#" class="text-gray-400 hover:text-white transition-colors duration-300">Help Center</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition-colors duration-300">Community</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition-colors duration-300">Blog</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h3 class="text-xl font-bold mb-6">Contact</h3>
+                    <ul class="space-y-3 text-gray-400">
+                        <li class="flex items-center">
+                            <i class="fas fa-envelope mr-3 text-blue-500"></i>
+                            <span>support@learnhub.com</span>
+                        </li>
+                        <li class="flex items-center">
+                            <i class="fas fa-headset mr-3 text-blue-500"></i>
+                            <span>24/7 Support</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="border-t border-gray-800 mt-12 pt-8 text-center text-gray-500">
+                <p>&copy; 2024 LearnHub. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- WhatsApp Float Button -->
+    <div id="whatsapp-float" class="fixed bottom-6 right-6 z-40">
+        <button id="whatsapp-btn" class="w-14 h-14 bg-green-500 rounded-full flex items-center justify-center shadow-2xl hover:shadow-green-300/50 hover:scale-110 transition-all duration-300">
+            <i class="fab fa-whatsapp text-white text-2xl"></i>
+        </button>
+    </div>
+
+    <!-- Back to Top Button -->
+    <button id="back-to-top" class="fixed bottom-6 left-6 w-12 h-12 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-full shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-110 z-40 hidden">
+        <i class="fas fa-arrow-up"></i>
+    </button>
+
+    <!-- Back to Home Button -->
+    <a href="../index.html" id="back-to-home" class="fixed bottom-24 left-6 w-12 h-12 bg-gray-800 text-white rounded-full shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-110 z-40 flex items-center justify-center">
+        <i class="fas fa-home"></i>
+    </a>
+
+    <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+    <script src="../js/main.js"></script>
+    <script src="../js/auth.js"></script>
+    <script src="../script.js"></script>
+    <script>
+        // Initialize dashboard
+        document.addEventListener('DOMContentLoaded', function() {
+            loadDashboardData();
+            setupDashboardEvents();
+        });
+        
+        function loadDashboardData() {
+            // Load user data
+            const user = JSON.parse(localStorage.getItem('currentUser'));
+            if (user) {
+                document.getElementById('user-name').textContent = user.name;
+                document.getElementById('user-email').textContent = user.email;
+                document.getElementById('dashboard-user-name').textContent = user.name.split(' ')[0];
+                document.getElementById('user-avatar').textContent = user.name.charAt(0).toUpperCase();
+            }
+            
+            // Load stats
+            const enrolledCourses = JSON.parse(localStorage.getItem('enrolledCourses')) || [];
+            document.getElementById('enrolled-count').textContent = enrolledCourses.length;
+            document.getElementById('hours-learned').textContent = enrolledCourses.length * 24;
+            document.getElementById('certificates-count').textContent = Math.floor(enrolledCourses.length / 2);
+            
+            // Calculate completion rate
+            const completedLessons = JSON.parse(localStorage.getItem('completedLessons')) || [];
+            const totalLessons = enrolledCourses.length * 10; // Assuming 10 lessons per course
+            const completionRate = totalLessons > 0 ? Math.round((completedLessons.length / totalLessons) * 100) : 0;
+            document.getElementById('completion-rate').textContent = `${completionRate}%`;
+            
+            // Load enrolled courses
+            loadEnrolledCourses();
+        }
+        
+        function loadEnrolledCourses() {
+            const enrolledCourses = JSON.parse(localStorage.getItem('enrolledCourses')) || [];
+            const coursesContainer = document.getElementById('enrolled-courses');
+            
+            if (enrolledCourses.length === 0) return;
+            
+            // Sample course data
+            const courses = [
+                { id: 1, title: "Full Stack Web Development", progress: 75 },
+                { id: 2, title: "Machine Learning Masterclass", progress: 40 },
+                { id: 3, title: "UI/UX Design Fundamentals", progress: 90 }
+            ];
+            
+            const userCourses = courses.filter(course => enrolledCourses.includes(course.id));
+            
+            if (userCourses.length > 0) {
+                coursesContainer.innerHTML = userCourses.map(course => `
+                    <div class="border border-gray-200 rounded-xl p-4 hover:border-blue-300 transition-colors duration-300">
+                        <div class="flex justify-between items-start mb-3">
+                            <div>
+                                <h3 class="font-bold">${course.title}</h3>
+                                <p class="text-sm text-gray-600">In Progress</p>
+                            </div>
+                            <span class="px-3 py-1 bg-blue-100 text-blue-700 text-sm font-medium rounded-full">
+                                ${course.progress}%
+                            </span>
+                        </div>
+                        <div class="progress-bar mb-2">
+                            <div class="progress-fill" style="width: ${course.progress}%"></div>
+                        </div>
+                        <div class="flex justify-between text-sm text-gray-600">
+                            <span>${course.progress}% Complete</span>
+                            <button class="text-blue-600 hover:text-blue-800 font-medium" onclick="continueCourse(${course.id})">
+                                Continue
+                            </button>
+                        </div>
+                    </div>
+                `).join('');
+            }
+        }
+        
+        function setupDashboardEvents() {
+            // Quick action buttons
+            document.querySelectorAll('.bg-white\\/20').forEach(button => {
+                button.addEventListener('click', function() {
+                    const text = this.textContent.trim();
+                    showToast(`Opening ${text}...`, 'info');
+                });
+            });
+        }
+        
+        function continueCourse(courseId) {
+            showToast('Continuing course...', 'info');
+            // In a real app, navigate to course player
+            setTimeout(() => {
+                window.location.href = `course-player.html?id=${courseId}`;
+            }, 500);
+        }
+        
+        function logout() {
+            localStorage.removeItem('currentUser');
+            showToast('Logged out successfully', 'success');
+            setTimeout(() => {
+                window.location.href = '../index.html';
+            }, 1000);
+        }
+    </script>
+</body>
+</html>
